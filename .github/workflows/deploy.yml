@@ -20,8 +20,11 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Install CDS CLI
+        run: npm install -g @sap/cds-dk
+
       - name: Build CAP project
-        run: node_modules/.bin/cds build --production
+        run: cds build --production
 
       - name: Set up pack CLI
         uses: buildpacks/github-actions/setup-pack@v5.0.0
