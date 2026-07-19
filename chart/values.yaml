@@ -1,0 +1,56 @@
+# yaml-language-server: $schema=./values.schema.json
+
+global:
+  domain: c-13c51ce.kyma.ondemand.com
+  imagePullSecret:
+    name: registry-secret
+  image:
+    registry: 
+    tag: latest
+
+srv:
+  bindings:
+    auth:
+      serviceInstanceName: xsuaa
+    db:
+      serviceInstanceName: hana
+  image:
+    repository: bookshop-srv
+  resources:
+    limits:
+      ephemeral-storage: 1G
+      memory: 500M
+    requests:
+      ephemeral-storage: 1G
+      cpu: 500m
+      memory: 500M
+  health:
+    liveness:
+      path: /health
+    readiness:
+      path: /health
+xsuaa:
+  serviceOfferingName: xsuaa
+  servicePlanName: application
+  parameters:
+    tenant-mode: dedicated
+    oauth2-configuration:
+      redirect-uris:
+        - https://*.{{ tpl .Values.global.domain . }}/**
+    xsappname: bookshop-{{ .Release.Namespace }}
+hana-deployer:
+  image:
+    repository: bookshop-hana-deployer
+  bindings:
+    hana:
+      serviceInstanceName: hana
+  resources:
+    limits:
+      cpu: 2000m
+      memory: 1G
+    requests:
+      cpu: 1000m
+      memory: 1G
+hana:
+  serviceOfferingName: hana
+  servicePlanName: hdi-shared

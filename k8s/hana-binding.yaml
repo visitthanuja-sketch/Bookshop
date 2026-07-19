@@ -1,0 +1,7 @@
+apiVersion: services.cloud.sap.com/v1
+kind: ServiceBinding
+metadata:
+  name: bookshop-hana-binding
+  namespace: i566464
+spec:
+  serviceInstanceName: hana-devops

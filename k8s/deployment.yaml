@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bookshop
+  namespace: i566464
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: bookshop
+  template:
+    metadata:
+      labels:
+        app: bookshop
+    spec:
+      imagePullSecrets:
+        - name: registry-secret
+      containers:
+        - name: bookshop
+          image: i076860/bookshop:v1
+          ports:
+            - containerPort: 4004
+          env:
+            - name: NODE_ENV
+              value: "production"
+          envFrom:
+            - secretRef:
+                name: hana-devops-binding
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: bookshop
+  namespace: i566464
+spec:
+  selector:
+    app: bookshop
+  ports:
+    - port: 4004
+      targetPort: 4004
