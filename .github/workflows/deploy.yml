@@ -63,6 +63,8 @@ jobs:
       - name: Deploy to Kyma
         run: |
           helm dependency update gen/chart
+          kubectl delete servicebinding bookshop-hana-deployer-hana bookshop-srv-db -n i566464 --ignore-not-found
+          kubectl delete apirule bookshop-srv -n i566464 --ignore-not-found
           helm upgrade --install bookshop gen/chart \
             --namespace i566464 \
             --set global.image.registry=ghcr.io/${{ github.repository_owner }} \
