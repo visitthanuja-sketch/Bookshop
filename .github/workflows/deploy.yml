@@ -60,6 +60,15 @@ jobs:
           mkdir -p $HOME/.kube
           echo "${{ secrets.KUBECONFIG }}" > $HOME/.kube/config
 
+      - name: Create ghcr.io pull secret in Kyma
+        run: |
+          kubectl delete secret registry-secret -n i566464 --ignore-not-found
+          kubectl create secret docker-registry registry-secret \
+            --docker-server=ghcr.io \
+            --docker-username=${{ github.actor }} \
+            --docker-password=${{ secrets.GITHUB_TOKEN }} \
+            --namespace=i566464
+
       - name: Deploy to Kyma
         run: |
           helm dependency update gen/chart
@@ -71,5 +80,4 @@ jobs:
             --set global.image.tag=${{ github.sha }} \
             --set "hana.serviceOfferingName=hana" \
             --set "hana.servicePlanName=hana" \
-            --disable-openapi-validation \
-            --wait --timeout=10m
+            --disable-openapi-validation
